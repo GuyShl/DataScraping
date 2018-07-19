@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="icon_dimension">20dp</dimen>
+    <dimen name="image_size">300dp</dimen>
+    <dimen name="searc_icon_size">50dp</dimen>
+</resources>

@@ -1,0 +1,138 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center_horizontal"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/parentConatiner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
+
+        <RelativeLayout
+            android:id="@+id/search_Container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+
+          >
+            <ImageButton
+                android:id="@+id/action_go"
+                android:layout_alignParentRight="true"
+                android:layout_width="@dimen/searc_icon_size"
+                android:layout_height="@dimen/searc_icon_size"
+                android:adjustViewBounds="true"
+                android:visibility="visible"
+                android:layout_centerVertical="true"
+                android:src="@drawable/baseline_search_black_18dp"/>
+
+        <LinearLayout
+         android:layout_toLeftOf="@+id/action_go"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="4dp"
+            android:layout_marginRight="10dp"
+            android:paddingBottom="4dp"
+            android:background="@drawable/boundary_background"
+            android:gravity="center_vertical">
+            <EditText
+                android:id="@+id/edt_search_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:imeOptions="actionSearch"
+                android:hint="@string/enter_url"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:lines="1"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                />
+
+            <ImageView
+                android:id="@+id/iv_clear_text"
+                android:layout_width="@dimen/icon_dimension"
+                android:layout_height="@dimen/icon_dimension"
+                android:adjustViewBounds="true"
+                android:visibility="visible"
+                android:src="@drawable/baseline_cancel_black_18dp"/>
+
+        </LinearLayout>
+
+          </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/drop_preview"
+            android:layout_below="@+id/search_Container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+        </LinearLayout>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeContainer"
+            android:layout_above="@id/bottomBar"
+            android:layout_below="@+id/search_Container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+          >
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <WebView
+                    android:id="@+id/webView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></WebView>
+
+            </android.support.v4.widget.NestedScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/bottomBar"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            >
+            <ImageView
+                android:id="@+id/backward"
+                android:layout_width="@dimen/icon_dimension"
+                android:layout_height="@dimen/icon_dimension"
+                android:layout_alignParentLeft="true"
+
+                android:src="@drawable/baseline_arrow_back_black_18dp"/>
+            <ImageView
+                android:id="@+id/forward"
+                android:layout_width="@dimen/icon_dimension"
+                android:layout_height="@dimen/icon_dimension"
+                android:layout_toRightOf="@id/backward"
+                android:layout_marginLeft="30dp"
+
+                android:src="@drawable/baseline_arrow_forward_black_18dp"/>
+            <ImageView
+                android:layout_alignParentRight="true"
+                android:id="@+id/preview"
+                android:layout_width="@dimen/icon_dimension"
+                android:layout_height="@dimen/icon_dimension"
+
+                android:src="@drawable/baseline_favorite_border_black_18dp"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
