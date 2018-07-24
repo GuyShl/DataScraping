@@ -12,6 +12,9 @@ import android.view.View;
 
 import com.datScrapping.R;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class CommonUtility {
     public static ProgressDialog progress;
     public static SharedPreferences sharedPreferences;
@@ -80,6 +83,14 @@ public class CommonUtility {
         });
         builder.create().show();
     }
+
+
+
+
+
+
+
+
 
 }
 

@@ -347,7 +347,7 @@ public class Main extends AppCompatActivity implements OnClickListener {
         if (listOfUrls.size() > 1) {
 
             currentUrlIndex = listOfUrls.indexOf(previewUrl);
-            if (currentUrlIndex != 0) {
+            if (currentUrlIndex != 0 ) {
                 CommonUtility.showProgressDailog(Main.this);
                 currentUrlIndex--;
                 mWebview.loadUrl(listOfUrls.get(currentUrlIndex));

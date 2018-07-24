@@ -3,6 +3,7 @@ package com.leocardz.link.preview.library;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -24,6 +25,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -147,7 +150,11 @@ public class TextCrawler {
 					sourceContent.setImage(metaTags.get("image"));
 					sourceContent.setTitle(metaTags.get("title"));
 					sourceContent.setDescription(metaTags.get("description"));
-					if(Character.isDigit(sourceContent.getFinalUrl().charAt(sourceContent.getFinalUrl().length()-1)))
+
+
+
+
+					if(isDigit(sourceContent.getFinalUrl().substring(sourceContent.getFinalUrl().lastIndexOf('/') + 1)))
 					{
 						sourceContent.setPrice(getPriceForTargetWebsite(strtempHtml));
 
@@ -556,25 +563,67 @@ public class TextCrawler {
 		List<String> matches = Regex.pregMatchAll(content,
 				Regex.DIV_PATTERN, 0);
 
+
+
           String price="";
 
 			  List <String> spanMatches=Regex.pregMatchAll(matches.get(0).toString(),
 					  Regex.SPAN_PATTERN, 0);
 			  price=Regex.pregMatchAll(spanMatches.get(0),Regex.PRICE_PATTERN,0).get(0);
-
-
-
-
-
-
-
-
-
-
-
-
+//			  if(price=="")
+//			  {
+//				price=  getPriceinRange(spanMatches.get(0).toString());
+//			  }
 
 		return  price;
+	}
+
+
+	public String getPriceinRange(String content)
+	{
+		String re1=".*?";	// Non-greedy match on filler
+		String re2="(\\$[0-9]+(?:\\.[0-9][0-9])?)(?![\\d])";	// Dollar Amount 1
+		String re3=".*?";	// Non-greedy match on filler
+		String re4=".";	// Uninteresting: c
+		String re5=".*?";	// Non-greedy match on filler
+		String re6=".";	// Uninteresting: c
+		String re7=".*?";	// Non-greedy match on filler
+		String re8=".";	// Uninteresting: c
+		String re9=".*?";	// Non-greedy match on filler
+		String re10=".";	// Uninteresting: c
+		String re11=".*?";	// Non-greedy match on filler
+		String re12=".";	// Uninteresting: c
+		String re13=".*?";	// Non-greedy match on filler
+		String re14=".";	// Uninteresting: c
+		String re15=".*?";	// Non-greedy match on filler
+		String re16="(.)";	// Any Single Character 1
+		String re17=".*?";	// Non-greedy match on filler
+		String re18="(\\$[0-9]+(?:\\.[0-9][0-9])?)(?![\\d])";	// Dollar Amount 2
+
+		Pattern p = Pattern.compile(re1+re2+re3+re4+re5+re6+re7+re8+re9+re10+re11+re12+re13+re14+re15+re16+re17+re18,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Matcher m = p.matcher(content);
+		String dollars1=m.group(1);
+		String c1=m.group(2);
+		String dollars2=m.group(3);
+		String price="";
+		price=dollars1.toString()+c1.toString()+dollars2.toString();
+		return  price;
+	}
+	public Boolean isDigit(String matchValue)
+	{
+		Boolean isDigit;
+		String regex = "^\\d";
+		Matcher matcher = Pattern.compile(regex).matcher(matchValue);
+		if (matcher.find())
+		{
+			isDigit=true;
+		}else
+		{
+			isDigit=false;
+		}
+
+
+		return  isDigit;
 	}
 }
 
