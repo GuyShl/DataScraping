@@ -6,17 +6,28 @@ import android.util.Log;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 
 public class TextCrawler {
@@ -103,53 +114,113 @@ public class TextCrawler {
 
 			if (!sourceContent.getFinalUrl().equals("")) {
 
-				try {
-					Document doc = getDocument();
-					sourceContent.setHtmlCode(extendedTrim(doc.toString()));
-					HashMap<String, String> metaTags = getMetaTags(sourceContent
-							.getHtmlCode());
-					sourceContent.setMetaTags(metaTags);
-					sourceContent.setTitle(metaTags.get("title"));
-					sourceContent.setDescription(metaTags
-							.get("description"));
-					sourceContent.setPrice(getPriceValue(doc));
 
-					if (sourceContent.getTitle().equals("")) {
-						String matchTitle = Regex.pregMatch(
-								sourceContent.getHtmlCode(),
-								Regex.TITLE_PATTERN, 2);
 
-						if (!matchTitle.equals(""))
-							sourceContent.setTitle(htmlDecode(matchTitle));
+				if(sourceContent.getFinalUrl().contains("www.target"))
+				{
+					URL url = null;
+					URLConnection urlConnection = null;
+					BufferedReader bufferedReader = null;
+					String inputLine;
+					String strtempHtml = "";
+					try {
+						url = new URL(sourceContent.getFinalUrl());
+						urlConnection = url.openConnection();
+						urlConnection.setRequestProperty("Content-type", "text/html");
+						urlConnection.setRequestProperty("Accept", "text/html, application/html");
+						bufferedReader = new BufferedReader(new InputStreamReader(
+								urlConnection.getInputStream()));
+						while ((inputLine = bufferedReader.readLine()) != null) {
+
+							strtempHtml = strtempHtml+inputLine;
+
+						}
+						bufferedReader.close();
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-					if (sourceContent.getDescription().equals(""))
-						sourceContent
-								.setDescription(crawlCode(sourceContent
-										.getHtmlCode()));
+					HashMap<String, String> metaTags = getMetaTags(strtempHtml);
+					sourceContent.setMetaTags(metaTags);
+					sourceContent.setFinalUrl(metaTags.get("url"));
+					sourceContent.setImage(metaTags.get("image"));
+					sourceContent.setTitle(metaTags.get("title"));
+					sourceContent.setDescription(metaTags.get("description"));
+					if(Character.isDigit(sourceContent.getFinalUrl().charAt(sourceContent.getFinalUrl().length()-1)))
+					{
+						sourceContent.setPrice(getPriceForTargetWebsite(strtempHtml));
 
-					sourceContent.setDescription(sourceContent
-							.getDescription().replaceAll(
-									Regex.SCRIPT_PATTERN, ""));
+					}else
+					{
+						sourceContent.setPrice("");
+					}
+
+                    if(!sourceContent.getPrice().equals(""))
+					{
+						sourceContent.setSuccess(true);
+					}else
+					{
+						sourceContent.setSuccess(false);
+					}
+
+
+
+
+
+
+				}else
+				{
+					try {
+						Document doc = getDocument();
+						sourceContent.setHtmlCode(extendedTrim(doc.toString()));
+						HashMap<String, String> metaTags = getMetaTags(sourceContent
+								.getHtmlCode());
+						sourceContent.setMetaTags(metaTags);
+						sourceContent.setTitle(metaTags.get("title"));
+						sourceContent.setDescription(metaTags
+								.get("description"));
+						sourceContent.setPrice(getPriceValue(doc));
+
+						if (sourceContent.getTitle().equals("")) {
+							String matchTitle = Regex.pregMatch(
+									sourceContent.getHtmlCode(),
+									Regex.TITLE_PATTERN, 2);
+
+							if (!matchTitle.equals(""))
+								sourceContent.setTitle(htmlDecode(matchTitle));
+						}
+						if (sourceContent.getDescription().equals(""))
+							sourceContent
+									.setDescription(crawlCode(sourceContent
+											.getHtmlCode()));
+
+						sourceContent.setDescription(sourceContent
+								.getDescription().replaceAll(
+										Regex.SCRIPT_PATTERN, ""));
 
 //						if (imageQuantity != NONE) {
 
-					sourceContent.setImage(getImages(doc));
+						sourceContent.setImage(getImages(doc));
 
-					//}
-					if(sourceContent.getPrice().equals(""))
-					{
-						String matchPrice=Regex.pregMatch(sourceContent.getHtmlCode(),Regex.PRICE_PATTERN,1)  ;
-						if (!matchPrice.equals(""))
+						//}
+						if(sourceContent.getPrice().equals(""))
 						{
-							sourceContent.setPrice(htmlDecode(matchPrice));
+							String matchPrice=Regex.pregMatch(sourceContent.getHtmlCode(),Regex.PRICE_PATTERN,1)  ;
+							if (!matchPrice.equals(""))
+							{
+								sourceContent.setPrice(htmlDecode(matchPrice));
+							}
 						}
-					}
 
-					sourceContent.setSuccess(true);
-				} catch (Throwable t) {
-					Log.d("TimeOut",t.toString());
-					sourceContent.setSuccess(false);
+						sourceContent.setSuccess(true);
+					} catch (Throwable t) {
+						Log.d("TimeOut",t.toString());
+						sourceContent.setSuccess(false);
+					}
 				}
+
+
 
 			}
 
@@ -166,8 +237,42 @@ public class TextCrawler {
 
 		protected Document getDocument() throws IOException {
 
-			//return Jsoup.connect(sourceContent.getFinalUrl()).timeout(45*1000).get();
-			return Jsoup.connect(sourceContent.getFinalUrl()).timeout(10*1000).get();
+
+			return Jsoup.connect(sourceContent.getFinalUrl()).maxBodySize(0)
+					.timeout(600000)
+					.get();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//			URL url = new URL("https://www.target.com.au/look/happy/LOOK1212166");
+//			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+//			DocumentBuilder db = null;
+//			try {
+//				db = dbf.newDocumentBuilder();
+//			} catch (ParserConfigurationException e) {
+//				e.printStackTrace();
+//			}
+//			Document doc = null;
+//			try {
+//				doc = (Document) db.parse(url.openStream());
+//			} catch (SAXException e) {
+//				e.printStackTrace();
+//			}
+//			return  doc;
 		}
 
 		/** Verifies if the content could not be retrieved */
@@ -218,14 +323,7 @@ public class TextCrawler {
 		if (metaOgImage!=null) {
 			imageUrl = metaOgImage.attr("content");
 		}
-//		else
-//		{
-//			metaOgImage=document.select("meta[property=og:url]");
-//			if(metaOgImage!=null)
-//			{
-//				imageUrl=metaOgImage.attr("content");
-//			}
-//		}
+
 		return imageUrl;
 	}
 
@@ -449,5 +547,34 @@ public class TextCrawler {
 				.replace("\r", " ").trim();
 	}
 
+
+
+
+	public String getPriceForTargetWebsite(String content) {
+
+
+		List<String> matches = Regex.pregMatchAll(content,
+				Regex.DIV_PATTERN, 0);
+
+          String price="";
+
+			  List <String> spanMatches=Regex.pregMatchAll(matches.get(0).toString(),
+					  Regex.SPAN_PATTERN, 0);
+			  price=Regex.pregMatchAll(spanMatches.get(0),Regex.PRICE_PATTERN,0).get(0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+		return  price;
+	}
 }
 

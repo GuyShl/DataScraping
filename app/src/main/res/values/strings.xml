@@ -32,5 +32,6 @@
     <string name="price_label">Price:</string>
     <string name="website_not_supported">This Website is not currently supported</string>
     <string name="Ok_text">OK</string>
+    <string name="no_product_found">No product found</string>
 
 </resources>

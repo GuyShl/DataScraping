@@ -15,6 +15,10 @@ public class Regex {
 	public static final String TITLE_PATTERN = "<title(.*?)>(.*?)</title>";
 	public static final String SCRIPT_PATTERN = "<script(.*?)>(.*?)</script>";
 	public static final String METATAG_PATTERN = "<meta(.*?)>";
+	public  static final String DIV_PATTERN="<div class=\"supplement\">(.*)</div>";
+	public  static final String SPAN_PATTERN="<span class=\"price price-regular\">(.*)</span>";
+	public static final String PRICE_CONTIANER_PATTERN="<span class=\"PricePoint price-regular\">(.*?)</span>";
+
 	public static final String METATAG_CONTENT_PATTERN = "content=\"(.*?)\"";
 	public static final String PRICE_PATTERN="[\\$\\£\\€](\\d+(?:\\.\\d{1,2})?)|^\\d+(,\\d{1,2})?$";
 //	public static final String PRICE_PATTERN="/\\$\\s*[0-9,]+(?:\\s*\\.\\s*\\d{2})?/g";

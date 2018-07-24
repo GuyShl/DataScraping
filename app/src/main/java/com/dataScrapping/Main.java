@@ -43,7 +43,7 @@ public class Main extends AppCompatActivity implements OnClickListener {
     String previewUrl = "";
     SwipeRefreshLayout mySwipeRefreshLayout;
     ImageView previewProduct, clearTextButton, forwardButton, backwardButton;
-    int currentUrlIndex;
+    int currentUrlIndex=-1;
     RelativeLayout serachContainer, bottomBar;
     PopupWindow popupWindow;
     int searchContianerWidth, searchContianerHeight, bottombarWidth, bottombarHeight;
@@ -285,11 +285,11 @@ public class Main extends AppCompatActivity implements OnClickListener {
      */
     private void previewProduct() {
         if (popupWindow == null || (popupWindow != null && !popupWindow.isShowing())) {
-            if (!previewUrl.equals("")) {
+            if (!previewUrl.equals("")&& !previewUrl.equals(getString(R.string.blank_url))) {
                 if (CommonUtility.isNetworkConnected(Main.this)) {
 
                     if(previewUrl.contains("www.frys.com")||previewUrl.contains("ebay.com")||
-                            previewUrl.contains("www.walmart.com"))
+                            previewUrl.contains("www.walmart.com")||previewUrl.contains("www.target.com"))
                     {
                         textCrawler
                                 .makePreview(previewUrl, callback, previewUrl
@@ -300,13 +300,14 @@ public class Main extends AppCompatActivity implements OnClickListener {
                        CommonUtility.showSimpleDialog(Main.this,getString(R.string.website_not_supported));
                     }
 
+                    previewProduct.setImageResource(R.drawable.baseline_favorite_black_18dp);
 
                 } else {
                     CommonUtility.showSimpleDialog(Main.this,getString( R.string.internet_connection_check));
 
                 }
             } else {
-                CommonUtility.showSimpleDialog(Main.this,getString(R.string.enter_url_check));
+                CommonUtility.showSimpleDialog(Main.this,getString(R.string.no_product_found));
 
             }
 
@@ -407,7 +408,7 @@ public class Main extends AppCompatActivity implements OnClickListener {
         mWebview.getSettings().setJavaScriptEnabled(true);
         mWebview.getSettings().setLoadWithOverviewMode(true);
         mWebview.getSettings().setUseWideViewPort(true);
-       // mWebview.getSettings().setDomStorageEnabled(true);
+        mWebview.getSettings().setDomStorageEnabled(true);
         mWebview.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -415,6 +416,7 @@ public class Main extends AppCompatActivity implements OnClickListener {
                 CommonUtility.showProgressDailog(Main.this);
                 view.loadUrl(url);
 
+                listOfUrls.add(url);
 
                 return true;
             }
@@ -424,7 +426,11 @@ public class Main extends AppCompatActivity implements OnClickListener {
                 CommonUtility.hideProgressDailog(Main.this);
                 mySwipeRefreshLayout.setRefreshing(false);
                 previewUrl = url;
-                listOfUrls.add(previewUrl);
+                if(listOfUrls.size()==0)
+                {
+                    listOfUrls.add(previewUrl);
+                }
+
 
 
             }

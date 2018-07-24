@@ -27,7 +27,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:27.1.1'
     compile 'com.koushikdutta.urlimageviewhelper:urlimageviewhelper:1.0.4'
-    compile 'org.jsoup:jsoup:1.8.3'
+    compile 'org.jsoup:jsoup:1.11.2'
     implementation 'com.squareup.picasso:picasso:2.5.2'
 //    compile 'com.leocardz:link-preview:2.0.0@aar'
     implementation project(':library')
